@@ -42,8 +42,20 @@ This project runs as a Windows background service. Currently, the installation i
       - Find an `Error` entry
       - Create an issue in the GitHub repository. Copy and paste the event as well as your configuration (remove password)
 
+## Home Assistant Configuration
+
+Open config file and enter the following
+
+```yaml
+# Example configuration.yaml entry
+sensor:
+  - platform: mqtt
+    state_topic: "{computer-name}/idlestatus"
+```
+
 ### TODO
 
+- Fix message to retrieve from config.json rather than computer name.
 - Create an installer
 - Create a WinForms project to make creating configuration easier
 - Monitor Video status of computer (Check if computer is watching a video)
