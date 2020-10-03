@@ -28,6 +28,7 @@ This project runs as a Windows background service. Currently, the installation i
 
 3. Publish the file
     - Open the command prompt (or Powershell)
+    - run `dotnet restore` in the root directory of the project
     - run `dotnet publish -r win-x64 -c Release -o {outputDirectory}` with outputDirectory being the location you want to run the service from.
 4. Create and start the service
     - Open the Command Prompt as an administrator (*not* Powershell)
