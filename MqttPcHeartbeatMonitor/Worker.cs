@@ -36,7 +36,6 @@ namespace MqttPcHeartbeatMonitor
                     var topic = GetLastUserInput.IsIdle().ToString();
 
                     await _mqttService.Publish(mqttClient, topic, message);
-                    _logger.LogInformation("Message: " + message);
                     await Task.Delay(10000, stoppingToken);
                 }
 
