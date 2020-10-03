@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Hosting.WindowsServices;
+using Microsoft.Extensions.Logging;
 
 namespace MqttPcHeartbeatMonitor
 {
@@ -17,10 +13,16 @@ namespace MqttPcHeartbeatMonitor
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseWindowsService()
+                .ConfigureLogging((_, logging) =>
+                {
+                    logging.ClearProviders();
+                    logging.AddEventLog();
+                })
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddTransient<IMqttService, MqttService>();
                     services.AddHostedService<Worker>();
-                });
+                })
+                .UseWindowsService();
     }
 }

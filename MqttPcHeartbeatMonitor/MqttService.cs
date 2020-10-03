@@ -6,14 +6,28 @@ using System.IO;
 using System.Threading;
 using MQTTnet.Server;
 using System.Threading.Tasks;
-using System;
+using Microsoft.Extensions.Logging;
+using System.Text;
+using MQTTnet.Exceptions;
 
 namespace MqttPcHeartbeatMonitor
 {
-    
-    public static class MqttService
+    public interface IMqttService
     {
-        public static async Task Publish(IMqttClient client, string payload, string topic, bool retain = false)
+        Task<IMqttClient> Connect();
+        Task Publish(IMqttClient client, string payload, string topic, bool retain = false);
+    }
+
+    public class MqttService : IMqttService
+    {
+        private readonly ILogger<MqttService> _logger;
+
+        public MqttService(ILogger<MqttService> logger)
+        {
+            _logger = logger;
+        }
+
+        public async Task Publish(IMqttClient client, string payload, string topic, bool retain = false)
         {
             var messageBuilder = new MqttApplicationMessageBuilder()
                 .WithTopic(topic.ToLower())
@@ -25,13 +39,20 @@ namespace MqttPcHeartbeatMonitor
             {
                 await client.PublishAsync(messageBuilder);
             }
-            catch (Exception e)
+            catch
             {
-                throw e;
+                var stringBuilder = new StringBuilder();
+                stringBuilder.Append($"Topic: {messageBuilder.Topic}");
+                stringBuilder.Append($"Payload: {messageBuilder.Payload}");
+                stringBuilder.Append($"Retain Message: {messageBuilder.Retain}");
+
+                _logger.LogError(stringBuilder.ToString());
+
+                throw;
             }
         }
 
-        public static async Task<IMqttClient> Connect()
+        public async Task<IMqttClient> Connect()
         {
             var options = ReadConfiguration();
             var client = new MqttFactory().CreateMqttClient();
@@ -39,22 +60,30 @@ namespace MqttPcHeartbeatMonitor
             {
                 await client.ConnectAsync(options, CancellationToken.None);
             }
-            catch (Exception e)
+            catch
             {
-                throw e;
+                var json = Helpers.MqttConfigJson;
+                var config = JsonConvert.DeserializeObject<Config>(json);
+
+                var stringBuilder = new StringBuilder();
+                stringBuilder.Append("Clinet could not connect to bridge\n");
+                stringBuilder.Append("MQTT Configuration Options:\n");
+                stringBuilder.Append($"Bridge: {config.BridgeUrl}:{config.BridgePort}\n");
+                stringBuilder.Append($"Username: {config.BridgeUser.UserName}\n");
+                stringBuilder.Append($"ClientId: {config.BridgeUser.ClientId}");
+
+                throw new MqttConfigurationException(stringBuilder.ToString());
             }
 
             return client;
         }
 
-        private static IMqttClientOptions ReadConfiguration()
+        private IMqttClientOptions ReadConfiguration()
         {
-            var filePath = Path.Combine(Environment.CurrentDirectory, "config.json");
+            var json = Helpers.MqttConfigJson;
 
-            if (File.Exists(filePath))
+            if (!string.IsNullOrEmpty(json))
             {
-                using var r = new StreamReader(filePath);
-                var json = r.ReadToEnd();
                 var config = JsonConvert.DeserializeObject<Config>(json);
 
                 return new MqttClientOptionsBuilder()
@@ -66,7 +95,7 @@ namespace MqttPcHeartbeatMonitor
             }
             else
             {
-                return null;
+                throw new FileNotFoundException($"config.json not found. Assembly location {Helpers.AssemblyDirectory}");
             }
         }
     }
