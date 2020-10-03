@@ -1,0 +1,9 @@
+{
+  "BridgeUrl": "hassio.local",
+  "BridgePort": 1883,
+  "BridgeUser": {
+    "UserName": "mqtt-user",
+    "ClientId": "not-hassio",
+    "Password": "mqtt-pass"
+  }
+}
