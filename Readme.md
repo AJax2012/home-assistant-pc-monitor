@@ -6,7 +6,8 @@ This project runs as a Windows background service. Currently, the installation i
 
 ## Installation
 
-1. Edit the JSON file
+1. Install [ASP.NET Core 3.1 Runtime](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+2. Edit the JSON file
     - BridgeUrl: location of the MQTT server
     - BridgePort: MQTT server port
     - UserName: username of the MQTT server (optional)
@@ -25,14 +26,14 @@ This project runs as a Windows background service. Currently, the installation i
 }
 ```
 
-2. Publish the file
+3. Publish the file
     - Open the command prompt (or Powershell)
     - run `dotnet publish -r win-x64 -c Release -o {outputDirectory}` with outputDirectory being the location you want to run the service from.
-3. Create and start the service
+4. Create and start the service
     - Open the Command Prompt as an administrator (*not* Powershell)
     - Run `sc create MqttPcHeartbeatMonitor binPath=C:\Path\To\EXE start=auto`
     - Run `sc start MqttPcHeartbeatMonitor`
-4. Check Services to see if MqttPcHeartbeatMonitor is still running
+5. Check Services to see if MqttPcHeartbeatMonitor is still running
     - In the Windows Search bar, type "services"
     - Find MqttPcHeartbeatMonitor, check that the   "Status" says `running`
     - If it's not, please perform the following:
