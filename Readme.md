@@ -6,7 +6,7 @@ This project runs as a Windows background service. Currently, the installation i
 
 ## Installation
 
-1. Install [ASP.NET Core 3.1 Runtime](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+1. Install [ASP.NET Core 3.1 SDK and Runtime](https://dotnet.microsoft.com/download/dotnet-core/3.1)
 2. Edit the JSON file
     - BridgeUrl: location of the MQTT server
     - BridgePort: MQTT server port
