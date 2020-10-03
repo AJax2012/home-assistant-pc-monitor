@@ -9,9 +9,9 @@ This project runs as a Windows background service. Currently, the installation i
 1. Edit the JSON file
     - BridgeUrl: location of the MQTT server
     - BridgePort: MQTT server port
-    - UserName: username of the MQTT server
+    - UserName: username of the MQTT server (optional)
     - ClientId: ID you would like to use for the Windows computer
-    - Password: password for the MQTT server
+    - Password: password for the MQTT server (optional)
 
 ```json
 {
