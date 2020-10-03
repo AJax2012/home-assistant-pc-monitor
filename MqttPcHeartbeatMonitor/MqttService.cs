@@ -56,6 +56,7 @@ namespace MqttPcHeartbeatMonitor
         {
             var options = ReadConfiguration();
             var client = new MqttFactory().CreateMqttClient();
+
             try
             {
                 await client.ConnectAsync(options, CancellationToken.None);
@@ -86,12 +87,23 @@ namespace MqttPcHeartbeatMonitor
             {
                 var config = JsonConvert.DeserializeObject<Config>(json);
 
-                return new MqttClientOptionsBuilder()
-                    .WithClientId(config.BridgeUser.ClientId)
-                    .WithTcpServer(config.BridgeUrl, config.BridgePort)
-                    .WithCredentials(config.BridgeUser.UserName, config.BridgeUser.Password)
-                    .WithCleanSession()
-                    .Build();
+                if (!string.IsNullOrEmpty(config.BridgeUser.UserName) && !string.IsNullOrEmpty(config.BridgeUser.Password))
+                {
+                    return new MqttClientOptionsBuilder()
+                        .WithClientId(config.BridgeUser.ClientId)
+                        .WithTcpServer(config.BridgeUrl, config.BridgePort)
+                        .WithCleanSession()
+                        .WithCredentials(config.BridgeUser.UserName, config.BridgeUser.Password)
+                        .Build();
+                }
+                else
+                {
+                    return new MqttClientOptionsBuilder()
+                        .WithClientId(config.BridgeUser.ClientId)
+                        .WithTcpServer(config.BridgeUrl, config.BridgePort)
+                        .WithCleanSession()
+                        .Build();
+                }
             }
             else
             {
