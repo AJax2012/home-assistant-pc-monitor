@@ -28,12 +28,11 @@ This project runs as a Windows background service. Currently, the installation i
 2. Publish the file
     - Open the command prompt (or Powershell)
     - run `dotnet publish -r win-x64 -c Release -o {outputDirectory}` with outputDirectory being the location you want to run the service from.
-    - add config.json to the outputDirectory location
-2. Create and start the service
+3. Create and start the service
     - Open the Command Prompt as an administrator (*not* Powershell)
     - Run `sc create MqttPcHeartbeatMonitor binPath=C:\Path\To\EXE start=auto`
     - Run `sc start MqttPcHeartbeatMonitor`
-3. Check Services to see if MqttPcHeartbeatMonitor is still running
+4. Check Services to see if MqttPcHeartbeatMonitor is still running
     - In the Windows Search bar, type "services"
     - Find MqttPcHeartbeatMonitor, check that the   "Status" says `running`
     - If it's not, please perform the following:
